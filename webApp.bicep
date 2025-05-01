@@ -36,7 +36,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      windowsFxVersion: 'DOTNET|8.0
+      windowsFxVersion: 'DOTNET|8.0'
       alwaysOn: true                  // Critical for production
       http20Enabled: true             // Performance optimization
       minTlsVersion: '1.2'            // Security alignment with storage
