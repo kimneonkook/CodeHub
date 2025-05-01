@@ -10,6 +10,13 @@ resource apim 'Microsoft.ApiManagement/service@2021-08-01' = {
     publisherName: 'MultiSoft'
   }
 }
+var tags = {
+  Environment: 'Production'
+  Project: 'CodeHub'
+  Team: 'Univators'
+  CostCenter: 'Marketing'
+  Compliance: 'GDPR'
+}
 
 // App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
