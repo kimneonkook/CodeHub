@@ -42,6 +42,15 @@ resource lifecyclePolicy 'Microsoft.Storage/storageAccounts/managementPolicies@2
   }
 }
 
+var tags = {
+  Environment: 'Production'
+  Project: 'CodeHub'
+  Team: 'Univators'
+  CostCenter: 'Marketing'
+  Compliance: 'GDPR'
+}
+
+
 // Private Endpoint
 resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: 'vnet-logstorage'
