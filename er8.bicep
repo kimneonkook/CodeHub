@@ -1,10 +1,10 @@
 targetScope = 'resourceGroup'
 
 @description('Primary email for alerts')
-param adminEmail string = 'devops@multisoft.example.com'
+param adminEmail string = 'evoskou@uth.gr'
 
 @description('SMS phone number (format: 69XXXXXXXX)')
-param adminPhone string = '69XXXXXXXX'
+param adminPhone string = '6989457229'
 
 @description('Location for resources')
 param location string = resourceGroup().location
@@ -91,7 +91,7 @@ var metricAlerts = [
     scope: resourceId('Microsoft.DocumentDB/databaseAccounts', 'company-cosmos-db-north')
     metric: 'NormalizedRUConsumption'
     namespace: 'Microsoft.DocumentDB/databaseAccounts'
-    threshold: 0.8
+    threshold: 80
     aggregation: 'Maximum'
   }
   {
@@ -128,14 +128,19 @@ resource metricAlertsResources 'Microsoft.Insights/metricAlerts@2018-03-01' = [f
     severity: 2
     enabled: true
     scopes: [ item.scope ]
+    evaluationFrequency: 'PT1M'
+    windowSize: 'PT5M'
     criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
       allOf: [
         {
+          name: 'metric1'
           metricName: item.metric
           metricNamespace: item.namespace
           operator: 'GreaterThan'
           threshold: item.threshold
           timeAggregation: item.aggregation
+          criterionType: 'StaticThresholdCriterion'
         }
       ]
     }
@@ -146,6 +151,7 @@ resource metricAlertsResources 'Microsoft.Insights/metricAlerts@2018-03-01' = [f
     ]
   }
 }]
+
 
 // Web App with App Insights config
 resource webApp 'Microsoft.Web/sites@2022-03-01' = {
