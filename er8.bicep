@@ -104,3 +104,39 @@ resource webAppFailureAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
     ]
   }
 }
+
+// Alert για καθυστέρηση στη SQL Database (ανήκει σε άλλο subscription)
+resource sqlLatencyAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: 'sql-latency-alert'
+  location: 'global'
+  properties: {
+    description: 'Alert on SQL DB latency > 500ms'
+    severity: 2
+    enabled: true
+    scopes: [
+      '/subscriptions/<SUB_ID>/resourceGroups/<SQL_RG>/providers/Microsoft.Sql/servers/company-sql-server2025/databases/companydb2025'
+    ]
+    evaluationFrequency: 'PT1M'
+    windowSize: 'PT5M'
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
+      allOf: [
+        {
+          name: 'DBLatency'
+          metricName: 'io_latency'
+          metricNamespace: 'Microsoft.Sql/servers/databases'
+          operator: 'GreaterThan'
+          threshold: 500
+          timeAggregation: 'Average'
+          criterionType: 'StaticThresholdCriterion'
+        }
+      ]
+    }
+    actions: [
+      {
+        actionGroupId: actionGroup.id
+      }
+    ]
+  }
+}
+
