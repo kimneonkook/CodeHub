@@ -1,60 +1,19 @@
-targetScope = 'resourceGroup'
-
-@description('Primary email for alerts')
-param adminEmail string = 'evoskou@uth.gr'
-
-@description('SMS phone number (format: 69XXXXXXXX)')
-param adminPhone string = '6989457229'
-
-@description('Location for resources')
-param location string = resourceGroup().location
-
-param projectTag string = 'MultiSoft Cloud Migration'
-param departmentTag string = 'IT'
-param costCenterTag string = 'IT-2025'
-param environmentTag string = 'Production'
-
-var commonTags = {
-  Project: projectTag
-  Department: departmentTag
-  CostCenter: costCenterTag
-  Environment: environmentTag
-}
-
 // Log Analytics Workspace
-resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
-  name: 'multisoft-logs-${uniqueString(resourceGroup().id)}'
-  location: location
-  tags: commonTags
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+  name: 'company-log-analytics'
+  location: 'westeurope'
+  sku: {
+    name: 'PerGB2018'
+  }
   properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
     retentionInDays: 90
-    features: {
-      enableLogAccessUsingOnlyResourcePermissions: true
-    }
   }
 }
 
-// Action Group
-resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
-  name: 'multisoft-critical-alerts'
-  location: 'global'
-  tags: commonTags
-  properties: {
-    groupShortName: 'critalert'
-    enabled: true
-    emailReceivers: [ { name: 'admin-email', emailAddress: adminEmail } ]
-    smsReceivers: [ { name: 'oncall-sms', countryCode: '30', phoneNumber: adminPhone } ]
-  }
-}
-
-// Application Insights
+// Application Insights (connected with Log Analytics)
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: 'multisoft-appinsights'
-  location: location
-  tags: commonTags
+  name: 'company-app-insights'
+  location: 'westeurope'
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -62,114 +21,62 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// Metric Alerts
-var metricAlerts = [
-  {
-    name: 'WebApp-HighCPU'
-    component: 'WebApp'
-    description: 'Alert when WebApp CPU > 80% for 5 mins'
-    scope: resourceId('Microsoft.Web/serverfarms', 'multisoft-api-plan')
-    metric: 'CpuPercentage'
-    namespace: 'Microsoft.Web/serverfarms'
-    threshold: 80
-    aggregation: 'Average'
-  }
-  {
-    name: 'SQL-HighDTU'
-    component: 'SQL'
-    description: 'Alert when SQL DTU > 80%'
-    scope: resourceId('Microsoft.Sql/servers/databases', 'company-sql-server2025', 'companydb2025')
-    metric: 'dtu_consumption_percent'
-    namespace: 'Microsoft.Sql/servers/databases'
-    threshold: 80
-    aggregation: 'Average'
-  }
-  {
-    name: 'Cosmos-HighRUs'
-    component: 'CosmosDB'
-    description: 'Alert when Cosmos DB RUs > 80%'
-    scope: resourceId('Microsoft.DocumentDB/databaseAccounts', 'company-cosmos-db-north')
-    metric: 'NormalizedRUConsumption'
-    namespace: 'Microsoft.DocumentDB/databaseAccounts'
-    threshold: 80
-    aggregation: 'Maximum'
-  }
-  {
-    name: 'Storage-ThrottlingErrors'
-    component: 'Storage'
-    description: 'Alert when storage throttling errors occur'
-    scope: resourceId('Microsoft.Storage/storageAccounts', 'companystorage2025')
-    metric: 'ThrottlingError'
-    namespace: 'Microsoft.Storage/storageAccounts'
-    threshold: 5
-    aggregation: 'Count'
-  }
-  {
-    name: 'APIM-FailedRequests'
-    component: 'APIM'
-    description: 'Alert when API failed requests > 10/min'
-    scope: resourceId('Microsoft.ApiManagement/service', 'multisoft-apim')
-    metric: 'FailedRequests'
-    namespace: 'Microsoft.ApiManagement/service'
-    threshold: 10
-    aggregation: 'Total'
-  }
-]
-
-resource metricAlertsResources 'Microsoft.Insights/metricAlerts@2018-03-01' = [for item in metricAlerts: {
-  name: item.name
+// Alert for high CPU
+resource cpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: 'high-cpu-app-plan'
   location: 'global'
-  tags: {
-    Component: item.component
-    Severity: 'High'
-  }
   properties: {
-    description: item.description
+    description: 'Alert when CPU usage > 80% for 5 minutes on App Plan'
     severity: 2
     enabled: true
-    scopes: [ item.scope ]
+    scopes: [
+      resourceId('Microsoft.Web/serverfarms', 'multisoft-api-plan')
+    ]
     evaluationFrequency: 'PT1M'
     windowSize: 'PT5M'
     criteria: {
       'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
       allOf: [
         {
-          name: 'metric1'
-          metricName: item.metric
-          metricNamespace: item.namespace
+          name: 'HighCPU'
+          metricName: 'CpuPercentage'
+          metricNamespace: 'Microsoft.Web/serverfarms'
           operator: 'GreaterThan'
-          threshold: item.threshold
-          timeAggregation: item.aggregation
-          criterionType: 'StaticThresholdCriterion'
+          threshold: 80
+          timeAggregation: 'Average'
         }
       ]
     }
-    actions: [
-      {
-        actionGroupId: actionGroup.id
-      }
-    ]
+    actions: []
   }
-}]
+}
 
-
-// Web App with App Insights config
-resource webApp 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'multisoft-webapi'
-  location: location
+// Failed webApp - error
+resource webAppFailureAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: 'webapp-failure-alert'
+  location: 'global'
   properties: {
-    serverFarmId: resourceId('Microsoft.Web/serverfarms', 'multisoft-api-plan')
-    siteConfig: {
-      appSettings: [
+    description: 'Alert on 5xx HTTP responses'
+    severity: 2
+    enabled: true
+    scopes: [
+      resourceId('Microsoft.Web/sites', 'multisoft-webapp-2025')
+    ]
+    evaluationFrequency: 'PT1M'
+    windowSize: 'PT5M'
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
+      allOf: [
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsights.properties.InstrumentationKey
-        }
-        {
-          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: appInsights.properties.ConnectionString
+          name: 'ServerErrors'
+          metricName: 'Http5xx'
+          metricNamespace: 'Microsoft.Web/sites'
+          operator: 'GreaterThan'
+          threshold: 10
+          timeAggregation: 'Total'
         }
       ]
     }
+    actions: []
   }
 }
