@@ -1,19 +1,16 @@
 // Log Analytics Workspace
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: 'company-log-analytics'
-  location: 'westeurope'
-  sku: {
-    name: 'PerGB2018'
-  }
+  location: resourceGroup().location
   properties: {
     retentionInDays: 90
   }
 }
 
-// Application Insights (connected with Log Analytics)
+// Application Insights (δεμένο με Log Analytics)
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: 'company-app-insights'
-  location: 'westeurope'
+  location: resourceGroup().location
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -21,7 +18,24 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// Alert for high CPU
+// Action Group (ειδοποίηση με email)
+resource actionGroup 'Microsoft.Insights/actionGroups@2022-06-01' = {
+  name: 'notify-team'
+  location: 'global'
+  properties: {
+    groupShortName: 'Team'
+    enabled: true
+    emailReceivers: [
+      {
+        name: 'StratisEmail'
+        emailAddress: 'stratinavoskou@gmail.com'
+        useCommonAlertSchema: true
+      }
+    ]
+  }
+}
+
+// Alert για υψηλό CPU usage στο App Service plan
 resource cpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
   name: 'high-cpu-app-plan'
   location: 'global'
@@ -44,14 +58,19 @@ resource cpuAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
           operator: 'GreaterThan'
           threshold: 80
           timeAggregation: 'Average'
+          criterionType: 'StaticThresholdCriterion'
         }
       ]
     }
-    actions: []
+    actions: [
+      {
+        actionGroupId: actionGroup.id
+      }
+    ]
   }
 }
 
-// Failed webApp - error
+// Alert για αποτυχία Web App
 resource webAppFailureAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
   name: 'webapp-failure-alert'
   location: 'global'
@@ -74,9 +93,14 @@ resource webAppFailureAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
           operator: 'GreaterThan'
           threshold: 10
           timeAggregation: 'Total'
+          criterionType: 'StaticThresholdCriterion'
         }
       ]
     }
-    actions: []
+    actions: [
+      {
+        actionGroupId: actionGroup.id
+      }
+    ]
   }
 }
