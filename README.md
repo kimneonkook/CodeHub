@@ -1,47 +1,54 @@
 # Cloud Infrastructure Project - MultiSoftware Enterprise
 
 ## Project Overview
-This project involves designing and implementing a fully cloud-native environment for MultiSoftware Enterprise on Microsoft Azure. The goal is to establish a secure, scalable, and resilient infrastructure that supports application development, data storage, global collaboration, and centralized management. The solution leverages Azure services to meet functional requirements such as authentication, hosting, data storage, API management, and monitoring.
+This project implements a cloud-native environment on Microsoft Azure with secure, scalable infrastructure supporting application development, data storage, and centralized management.
 
 ## Functional Requirements
-1. **Authentication & Authorization**:  
-   - Use Azure Entra ID for centralized identity management.  
-   - Enforce multi-factor authentication (MFA) for remote access and administrators.  
-   - Role-based access control (RBAC) for developers and administrators.  
 
-2. **Web Hosting**:  
-   - Host an ASP.NET Core website (~1000 visitors/day) using Azure App Service.  
+### 1. Authentication & Authorization
+- Azure Entra ID for identity management
+- Multi-factor authentication (MFA) enforcement
+- Role-based access control (RBAC)
 
-3. **Data Storage**:  
-   - Structured data: Azure SQL Database or Cosmos DB (~2000 reads/500 writes daily).  
-   - Unstructured data: Azure Blob Storage (documents, images).  
-   - Automatic backups and encryption at rest.  
+### 2. Web Hosting
+- ASP.NET Core website (1000 visitors/day)
+- Azure App Service (Standard S1 tier)
 
-4. **API Hosting**:  
-   - Host a public API (~5000 requests/day, 5 kb/request) using Azure API Management.  
+### 3. Data Storage
+| Service | Purpose | Capacity |
+|---------|---------|----------|
+| Azure SQL Database | Structured data | 2000 reads/500 writes daily |
+| Azure Blob Storage | Unstructured data | Automatic backups |
 
-5. **Serverless Operations**:  
-   - Implement stateless functions with Azure Functions.  
+### 4. API Hosting
+- Public API (5000 requests/day)
+- Azure API Management (Developer tier)
 
-6. **Content Storage**:  
-   - Store public images/videos (~250 GB) in Blob Storage with lifecycle policies.  
+### 5. Serverless Operations
+- Azure Functions (Python/HTTP triggers)
 
-7. **Logging & Compliance**:  
-   - Archive server logs (~5 TB, +50 GB/month) in Azure Archive Storage.  
+## Deployment
 
-8. **Monitoring**:  
-   - Enable Azure Monitor, Application Insights, and Log Analytics.  
-   - Set alerts for critical metrics (CPU, failures, DB response time).  
+### Prerequisites
+- [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli)
+- [Bicep](https://learn.microsoft.com/azure/azure-resource-manager/bicep/install)
 
-9. **Billing**:  
-   - Separate billing for project resources.  
- 
+### Deployment Commands
+```bash
+# Authenticate
+az login
+
+# Deploy resources
+az deployment group create \
+  --resource-group <your-resource-group> \
+  --template-file "./infra/main.bicep" \
+  --parameters "./infra/params.json"
 
 ## Team
 - [Efstratia Voskou]  
 - [Zoi Iliadou]  
 - [Morfeo Alcani] 
-- [Giannis Mylonakis] 
+- [Ioannis Mylonakis] 
 
 **University of Thessaly**  
 **April 2025**  
