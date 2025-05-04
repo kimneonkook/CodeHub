@@ -27,6 +27,24 @@ This project implements a cloud-native environment on Microsoft Azure with secur
 ### 5. Serverless Operations
 - Azure Functions (Python/HTTP triggers)
 
+## Cost Analysis
+
+### 5-Year Total Cost Comparison
+| Cost Component       | On-Premises | Azure  |
+|----------------------|-------------|--------|
+| **Compute**          | $28,697     | $7,068 |
+| **Hardware**         | $3,368      | $0     |
+| **Software**         | $7,694      | $0     |
+| **Database**         | $16,727     | $4,156 |
+| **Storage**          | $467        | $0     |
+| **IT Labor**         | $2,300      | $0     |
+| **Total**            | **$36,404** | **$11,224** |
+
+**Total Savings**: $25,180 over 5 years
+
+![Detailed Cost Breakdown](./Cost.png) 
+*Full cost comparison between on-premises and Azure solutions*
+
 ## Deployment
 
 ### Prerequisites
@@ -44,6 +62,7 @@ az deployment group create \
   --template-file "./infra/main.bicep" \
   --parameters "./infra/params.json"
 
+```
 ### Team
 - [Efstratia Voskou]  
 - [Zoi Iliadou]  
