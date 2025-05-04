@@ -1,5 +1,5 @@
 // Parameters
-param location string = 'westerneurope'
+param location string = 'westeurope'
 param webAppName string = 'multisoft-webapp-2025'
 param appServicePlanName string = 'multisoft-asp-2025'
 
@@ -37,12 +37,12 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       windowsFxVersion: 'DOTNET|8.0'
-      alwaysOn: true                  // Critical for production
+      alwaysOn: true                  // for production
       http20Enabled: true             // Performance optimization
-      minTlsVersion: '1.2'            // Security alignment with storage
+      minTlsVersion: '1.2'            // Security compliance
       ftpsState: 'Disabled'           // Disable insecure FTP
     }
-    httpsOnly: true                   // Enforce HTTPS
+    httpsOnly: true                   // HTTPS
   }
 }
 
