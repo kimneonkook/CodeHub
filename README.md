@@ -42,8 +42,7 @@ This project implements a cloud-native environment on Microsoft Azure with secur
 
 **Total Savings**: $25,180 over 5 years
 
-![Detailed Cost Breakdown]("C:\Users\Admin\Desktop\CodeHub\CodeHub\Estimated billing\Cost.png") 
-*Full cost comparison between on-premises and Azure solutions*
+![Detailed Cost Breakdown](./Estimated%20billing/Cost.png)
 
 ## Deployment
 
