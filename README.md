@@ -44,7 +44,7 @@ az deployment group create \
   --template-file "./infra/main.bicep" \
   --parameters "./infra/params.json"
 
-## Team
+### Team
 - [Efstratia Voskou]  
 - [Zoi Iliadou]  
 - [Morfeo Alcani] 
