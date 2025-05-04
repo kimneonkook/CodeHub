@@ -1,0 +1,168 @@
+{
+    "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Resources/deployments/logStorage",
+    "location": null,
+    "name": "logStorage",
+    "properties": {
+      "correlationId": "6353c8e7-fa76-48aa-b1d5-4e2583c2ca72",
+      "debugSetting": null,
+      "dependencies": [
+        {
+          "dependsOn": [
+            {
+              "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Storage/storageAccounts/logs6uo5rllwcvtga",
+              "resourceGroup": "LogStorageRG",
+              "resourceName": "logs6uo5rllwcvtga",
+              "resourceType": "Microsoft.Storage/storageAccounts"
+            }
+          ],
+          "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Storage/storageAccounts/logs6uo5rllwcvtga/managementPolicies/default",
+          "resourceGroup": "LogStorageRG",
+          "resourceName": "logs6uo5rllwcvtga/default",
+          "resourceType": "Microsoft.Storage/storageAccounts/managementPolicies"
+        },
+        {
+          "dependsOn": [
+            {
+              "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Storage/storageAccounts/logs6uo5rllwcvtga",
+              "resourceGroup": "LogStorageRG",
+              "resourceName": "logs6uo5rllwcvtga",
+              "resourceType": "Microsoft.Storage/storageAccounts"
+            },
+            {
+              "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Network/virtualNetworks/vnet-logstorage",
+              "resourceGroup": "LogStorageRG",
+              "resourceName": "vnet-logstorage",
+              "resourceType": "Microsoft.Network/virtualNetworks"
+            }
+          ],
+          "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Network/privateEndpoints/pe-logs6uo5rllwcvtga-blob",
+          "resourceGroup": "LogStorageRG",
+          "resourceName": "pe-logs6uo5rllwcvtga-blob",
+          "resourceType": "Microsoft.Network/privateEndpoints"
+        }
+      ],
+      "duration": "PT32.2517489S",
+      "error": null,
+      "mode": "Incremental",
+      "onErrorDeployment": null,
+      "outputResources": [
+        {
+          "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Network/privateEndpoints/pe-logs6uo5rllwcvtga-blob",
+          "resourceGroup": "LogStorageRG"
+        },
+        {
+          "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Network/virtualNetworks/vnet-logstorage",
+          "resourceGroup": "LogStorageRG"
+        },
+        {
+          "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Storage/storageAccounts/logs6uo5rllwcvtga",
+          "resourceGroup": "LogStorageRG"
+        },
+        {
+          "id": "/subscriptions/e80fbb95-2684-4e1a-8230-eaf6a5e34469/resourceGroups/LogStorageRG/providers/Microsoft.Storage/storageAccounts/logs6uo5rllwcvtga/managementPolicies/default",
+          "resourceGroup": "LogStorageRG"
+        }
+      ],
+      "outputs": null,
+      "parameters": {
+        "location": {
+          "type": "String",
+          "value": "westeurope"
+        },
+        "retentionDays": {
+          "type": "Int",
+          "value": 365
+        },
+        "storageAccountName": {
+          "type": "String",
+          "value": "logs6uo5rllwcvtga"
+        }
+      },
+      "parametersLink": null,
+      "providers": [
+        {
+          "id": null,
+          "namespace": "Microsoft.Storage",
+          "providerAuthorizationConsentState": null,
+          "registrationPolicy": null,
+          "registrationState": null,
+          "resourceTypes": [
+            {
+              "aliases": null,
+              "apiProfiles": null,
+              "apiVersions": null,
+              "capabilities": null,
+              "defaultApiVersion": null,
+              "locationMappings": null,
+              "locations": [
+                "westeurope"
+              ],
+              "properties": null,
+              "resourceType": "storageAccounts",
+              "zoneMappings": null
+            },
+            {
+              "aliases": null,
+              "apiProfiles": null,
+              "apiVersions": null,
+              "capabilities": null,
+              "defaultApiVersion": null,
+              "locationMappings": null,
+              "locations": [
+                null
+              ],
+              "properties": null,
+              "resourceType": "storageAccounts/managementPolicies",
+              "zoneMappings": null
+            }
+          ]
+        },
+        {
+          "id": null,
+          "namespace": "Microsoft.Network",
+          "providerAuthorizationConsentState": null,
+          "registrationPolicy": null,
+          "registrationState": null,
+          "resourceTypes": [
+            {
+              "aliases": null,
+              "apiProfiles": null,
+              "apiVersions": null,
+              "capabilities": null,
+              "defaultApiVersion": null,
+              "locationMappings": null,
+              "locations": [
+                "westeurope"
+              ],
+              "properties": null,
+              "resourceType": "virtualNetworks",
+              "zoneMappings": null
+            },
+            {
+              "aliases": null,
+              "apiProfiles": null,
+              "apiVersions": null,
+              "capabilities": null,
+              "defaultApiVersion": null,
+              "locationMappings": null,
+              "locations": [
+                "westeurope"
+              ],
+              "properties": null,
+              "resourceType": "privateEndpoints",
+              "zoneMappings": null
+            }
+          ]
+        }
+      ],
+      "provisioningState": "Succeeded",
+      "templateHash": "15513645532143573638",
+      "templateLink": null,
+      "timestamp": "2025-05-01T14:11:18.586098+00:00",
+      "validatedResources": null
+    },
+    "resourceGroup": "LogStorageRG",
+    "tags": null,
+    "type": "Microsoft.Resources/deployments"
+  }
+  
